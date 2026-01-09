@@ -69,6 +69,24 @@ const Home = () => {
     toast.success("Present students copied to clipboard!");
   };
 
+  const sendToWhatsapp = () => {
+    const presentStudents = students
+      .filter((s) => s.status === "Present")
+      .map((s) => `${s.no}. ${s.studentName}`)
+      .join("\n");
+
+    const today = new Date().toLocaleDateString("en-GB"); // DD/MM/YYYY
+
+    const message =
+      `Artificial Intelligence\n${today}\n\n` +
+      (presentStudents || "No students present");
+
+    const encoded = encodeURIComponent(message);
+
+    // Open WhatsApp
+    window.open(`https://wa.me/?text=${encoded}`, "_blank");
+  };
+
   return (
     <div className="min-h-screen max-w-4xl mx-auto p-6">
       <Table>
@@ -113,7 +131,7 @@ const Home = () => {
           <Button onClick={copyPresentList}>
             <Copy /> Copy List
           </Button>
-          <Button size="icon" aria-label="Submit">
+          <Button size="icon" aria-label="Submit" onClick={sendToWhatsapp}>
             <Send />
           </Button>
         </div>
