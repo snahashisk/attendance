@@ -1,65 +1,125 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import { Send, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { toast } from "sonner";
 
-export default function Home() {
+const studentList = [
+  { no: "1", studentName: "Nibir Biswas", status: "Absent" },
+  { no: "2", studentName: "Shalini Mukherjee", status: "Absent" },
+  { no: "3", studentName: "Deep Mukherjee", status: "Absent" },
+  { no: "4", studentName: "Chayan Jana", status: "Absent" },
+  { no: "5", studentName: "Ayan Makar", status: "Absent" },
+  { no: "6", studentName: "Snahashis Kanrar", status: "Absent" },
+  { no: "7", studentName: "Anuskha Maity", status: "Absent" },
+  { no: "8", studentName: "Shuvam Roy", status: "Absent" },
+  { no: "9", studentName: "Kaustav Lahiri", status: "Absent" },
+  { no: "10", studentName: "Koustav Das", status: "Absent" },
+  { no: "11", studentName: "Pritam Roy", status: "Absent" },
+  { no: "12", studentName: "Kripakana Gonrah", status: "Absent" },
+  { no: "13", studentName: "Shuvrajit Das", status: "Absent" },
+  { no: "14", studentName: "Sayan Dey", status: "Absent" },
+  { no: "15", studentName: "Sweety Nag", status: "Absent" },
+  { no: "16", studentName: "Diksha Sao", status: "Absent" },
+  { no: "17", studentName: "Pankaj Kumar Gupta", status: "Absent" },
+  { no: "18", studentName: "Arijit Biswas", status: "Absent" },
+  { no: "19", studentName: "Surajit Dey", status: "Absent" },
+  { no: "20", studentName: "Manik Patra", status: "Absent" },
+  { no: "21", studentName: "Shah Alam", status: "Absent" },
+];
+
+const Home = () => {
+  const [students, setStudents] = useState(studentList);
+
+  const toggleAttendance = (no: string) => {
+    setStudents((prev) =>
+      prev.map((student) =>
+        student.no === no
+          ? {
+              ...student,
+              status: student.status === "Absent" ? "Present" : "Absent",
+            }
+          : student
+      )
+    );
+  };
+
+  const copyPresentList = () => {
+    const presentStudents = students
+      .filter((s) => s.status === "Present")
+      .map((s) => `${s.no}. ${s.studentName}`)
+      .join("\n");
+
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("en-GB").replace(/\//g, "/");
+
+    navigator.clipboard.writeText(
+      "*Artificial Intelligence*\n" +
+        `Date: ${formattedDate}\n\n` +
+        presentStudents || "No students present"
+    );
+    toast.success("Present students copied to clipboard!");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen max-w-4xl mx-auto p-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-25">Sr. No</TableHead>
+            <TableHead>Student Name</TableHead>
+            <TableHead className="text-right">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {students.map((student) => (
+            <TableRow
+              key={student.no}
+              onClick={() => toggleAttendance(student.no)}
+              className={`cursor-pointer ${
+                student.status === "Present"
+                  ? "bg-green-100 dark:bg-green-900"
+                  : ""
+              }`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <TableCell className="font-medium">{student.no}</TableCell>
+              <TableCell>{student.studentName}</TableCell>
+              <TableCell className="text-right">{student.status}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="flex flex-col justify-center items-center mt-6">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-center mt-4">
+          Student Attendance List
+        </h4>
+        <ul className="my-6 ml-6 list-decimal [&>li]:mt-2">
+          {students
+            .filter((s) => s.status === "Present")
+            .map((s) => (
+              <li key={s.no}>{s.studentName}</li>
+            ))}
+        </ul>
+        <div className="flex flex-wrap items-center gap-2 md:flex-row">
+          <Button onClick={copyPresentList}>
+            <Copy /> Copy List
+          </Button>
+          <Button size="icon" aria-label="Submit">
+            <Send />
+          </Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
