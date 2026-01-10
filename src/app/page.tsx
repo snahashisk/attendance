@@ -55,7 +55,7 @@ const Home = () => {
   const copyPresentList = () => {
     const presentStudents = students
       .filter((s) => s.status === "Present")
-      .map((s) => `${s.no}. ${s.studentName}`)
+      .map((s, index) => `${index + 1}. ${s.studentName}`)
       .join("\n");
 
     const today = new Date();
@@ -72,18 +72,17 @@ const Home = () => {
   const sendToWhatsapp = () => {
     const presentStudents = students
       .filter((s) => s.status === "Present")
-      .map((s) => `${s.no}. ${s.studentName}`)
+      .map((s, index) => `${index + 1}. ${s.studentName}`)
       .join("\n");
 
     const today = new Date().toLocaleDateString("en-GB"); // DD/MM/YYYY
 
     const message =
-      `Artificial Intelligence\n${today}\n\n` +
-      (presentStudents || "No students present");
+      "*Artificial Intelligence*\n" + `Date: ${today}\n\n` + presentStudents ||
+      "No students present";
 
     const encoded = encodeURIComponent(message);
 
-    // Open WhatsApp
     window.open(`https://wa.me/?text=${encoded}`, "_blank");
   };
 
