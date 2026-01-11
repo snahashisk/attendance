@@ -69,6 +69,8 @@ const Home = () => {
     toast.success("Present students copied to clipboard!");
   };
 
+  //need a little change in subject selection
+
   const sendToWhatsapp = () => {
     const presentStudents = students
       .filter((s) => s.status === "Present")
