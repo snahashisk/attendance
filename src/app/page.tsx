@@ -69,7 +69,7 @@ const Home = () => {
     toast.success("Present students copied to clipboard!");
   };
 
-  //need a little change in subject selection
+  //need a little change in subject
 
   const sendToWhatsapp = () => {
     const presentStudents = students
